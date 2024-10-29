@@ -22,5 +22,14 @@ const PurchaseOrderSchema = new Schema({
   ]
 });
 
+PurchaseOrderSchema.pre('save', async function (next) {
+    if (this.isNew) {
+      const lastOrder = await this.constructor.findOne().sort({ orderNo: -1 });
+      const lastOrderNo = lastOrder && lastOrder.orderNo ? parseInt(lastOrder.orderNo.slice(4)) : 0;
+      this.orderNo = `ORDER${String(lastOrderNo + 1).padStart(3, '0')}`;
+    }
+    next();
+  });
+
 const PurchaseOrder = mongoose.model('PurchaseOrder', PurchaseOrderSchema);
 module.exports = PurchaseOrder;

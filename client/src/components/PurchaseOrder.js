@@ -83,9 +83,25 @@ const PurchaseOrder = () => {
     alert("Exporting to Excel...");
   };
 
-  const handlePrintOrder = () => {
-    window.print();
-  };
+  const handlePrintOrder =async () => {
+    try {
+        const orderData = {
+            orderDate,
+            supplierName: selectedSupplier,
+            itemTotal: totals.itemTotal,
+            discount: totals.discountTotal,
+            netAmount: totals.netAmount,
+            items: orderItems,  
+          };
+      
+          const response = await API.post('/purchase-orders', orderData);
+          alert("Order saved:", response.data);
+      
+          window.print();
+        } catch (error) {
+          alert("Error saving order:", error);
+        }
+      };
 
   return (
     <div className="container my-5">
